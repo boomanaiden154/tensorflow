@@ -293,11 +293,11 @@ _pywrap_utils.RegisterType("SparseTensorValue", SparseTensorValue)
 class SparseTensorSpec(type_spec.BatchableTypeSpec):
   """Type specification for a `tf.sparse.SparseTensor`."""
 
-  __slots__ = ["_shape", "_dtype"]
+  __slots__ = ["_shape", "_dtype", "_name"]
 
   value_type = property(lambda self: SparseTensor)
 
-  def __init__(self, shape=None, dtype=dtypes.float32):
+  def __init__(self, shape=None, dtype=dtypes.float32, name=None):
     """Constructs a type specification for a `tf.sparse.SparseTensor`.
 
     Args:
@@ -307,9 +307,10 @@ class SparseTensorSpec(type_spec.BatchableTypeSpec):
     """
     self._shape = tensor_shape.as_shape(shape)
     self._dtype = dtypes.as_dtype(dtype)
+    self._name = name
 
   def _serialize(self):
-    return (self._shape, self._dtype)
+    return (self._shape, self._dtype, self._name)
 
   @property
   def dtype(self):
@@ -320,6 +321,11 @@ class SparseTensorSpec(type_spec.BatchableTypeSpec):
   def shape(self):
     """The `tf.TensorShape` specified by this type for the SparseTensor."""
     return self._shape
+
+  @property
+  def name(self):
+    """Returns the (optionally provided) name of the described SparseTensor."""
+    return self._name
 
   @property
   def _component_specs(self):
